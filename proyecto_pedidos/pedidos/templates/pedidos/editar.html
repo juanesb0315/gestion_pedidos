@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section class="panel-crud vista-contenedor">
+
+    <div class="card-header encabezado-crud vista-cabecera">
+        <h5 class="mb-0 fw-semibold">Editar Pedido</h5>
+    </div>
+
+    <div class="card-body vista-cuerpo">
+
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- CLIENTE -->
+            <div class="mb-3">
+                <label class="form-label">Cliente</label>
+                {{ form.cliente }}
+            </div>
+
+            <!-- FECHA -->
+            <div class="mb-3">
+                <label class="form-label">Fecha</label>
+                {{ form.fecha }}
+            </div>
+
+            <!-- ESTADO -->
+            <div class="mb-3">
+                <label class="form-label">Estado</label>
+                {{ form.estado }}
+            </div>
+
+            <!-- BOTONES -->
+            <div class="acciones-formulario">
+
+                <a href="/" class="link-accion small">
+                    ← Volver
+                </a>
+
+                <button type="submit" class="btn btn-guardar-crud px-4">
+                    Guardar cambios
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="panel-crud vista-contenedor">
+    <div class="card-header encabezado-crud vista-cabecera">
+        <h5 class="mb-0 fw-semibold">Editar Producto del Pedido</h5>
+    </div>
+
+    <div class="card-body vista-cuerpo">
+        <form method="post">
+            {% csrf_token %}
+            
+            {% for campo_formulario in form %}
+                <div class="mb-3">
+                    <label class="form-label">{{ campo_formulario.label }}</label>
+                    {{ campo_formulario }}
+                    
+                    {% if campo_formulario.help_text %}
+                        <div class="form-text">{{ campo_formulario.help_text }}</div>
+                    {% endif %}
+
+                    {% for error_campo in campo_formulario.errors %}
+                        <div class="text-danger small">{{ error_campo }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
+
+            <div class="acciones-formulario justify-content-end">
+                <button type="button" class="btn btn-guardar-crud" onclick="confirmarGuardar()">
+                    Guardar cambios
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+function confirmarGuardar() {
+    Swal.fire({
+        title: '¿Guardar cambios?',
+        text: 'Se actualizará la cantidad del producto en el pedido.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#212529',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Sí, guardar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.querySelector('form').submit();
+        }
+    });
+}
+</script>
+{% endblock %}

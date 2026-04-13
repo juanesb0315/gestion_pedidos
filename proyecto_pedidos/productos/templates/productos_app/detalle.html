@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="panel-crud vista-contenedor fixed-list-card">
+    <div class="card-header encabezado-crud vista-cabecera">
+        <h5 class="mb-0 fw-semibold">Detalle de Producto #{{ registro_producto.id }}</h5>
+        <a href="{% url 'listar_productos' %}" class="btn btn-sm btn-crear-crud">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+    </div>
+
+    <div class="card-body vista-cuerpo">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="small text-muted">Nombre</div>
+                <div class="fw-medium">{{ registro_producto.nombre }}</div>
+            </div>
+            <div class="col-md-6">
+                <div class="small text-muted">Precio</div>
+                <div>${{ registro_producto.precio }}</div>
+            </div>
+            <div class="col-md-6">
+                <div class="small text-muted">Stock</div>
+                <div>{{ registro_producto.stock }}</div>
+            </div>
+            <div class="col-md-12 mt-3">
+                <a href="{% url 'editar_producto' registro_producto.id %}" class="btn btn-sm btn-primary">
+                    <i class="bi bi-pencil"></i> Editar producto
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

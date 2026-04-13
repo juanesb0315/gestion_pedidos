@@ -1,0 +1,89 @@
+-- =========================================================
+-- ESTRUCTURA SQL - SISTEMA GESTION DE PEDIDOS (MYSQL)
+-- Basado en los modelos actuales del proyecto Django
+-- =========================================================
+
+-- 1) CREAR BASE DE DATOS
+CREATE DATABASE IF NOT EXISTS gestion_pedidos
+  CHARACTER SET utf8mb4
+  COLLATE utf8mb4_unicode_ci;
+
+USE gestion_pedidos;
+
+-- 2) TABLAS PRINCIPALES
+
+-- ---------------------------------------------------------
+-- Tabla: pedidos_cliente
+-- ---------------------------------------------------------
+CREATE TABLE IF NOT EXISTS pedidos_cliente (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    correo VARCHAR(254) NOT NULL,
+    direccion VARCHAR(200) NOT NULL,
+    telefono VARCHAR(20) NOT NULL,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------
+-- Tabla: pedidos_producto
+-- ---------------------------------------------------------
+CREATE TABLE IF NOT EXISTS pedidos_producto (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    precio DECIMAL(12,2) NOT NULL,
+    stock INT NOT NULL,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------
+-- Tabla: pedidos_pedido
+-- ---------------------------------------------------------
+CREATE TABLE IF NOT EXISTS pedidos_pedido (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    cliente_id BIGINT NOT NULL,
+    fecha DATE NOT NULL,
+    estado ENUM('pendiente','enviado','entregado') NOT NULL DEFAULT 'pendiente',
+    PRIMARY KEY (id),
+    INDEX idx_pedidos_pedido_cliente_id (cliente_id),
+    CONSTRAINT fk_pedidos_pedido_cliente
+        FOREIGN KEY (cliente_id)
+        REFERENCES pedidos_cliente(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------
+-- Tabla: pedidos_detallepedido
+-- ---------------------------------------------------------
+CREATE TABLE IF NOT EXISTS pedidos_detallepedido (
+    id BIGINT NOT NULL AUTO_INCREMENT,
+    pedido_id BIGINT NOT NULL,
+    producto_id BIGINT NOT NULL,
+    cantidad INT NOT NULL,
+    subtotal DECIMAL(12,2) NOT NULL,
+    PRIMARY KEY (id),
+    INDEX idx_pedidos_detallepedido_pedido_id (pedido_id),
+    INDEX idx_pedidos_detallepedido_producto_id (producto_id),
+    CONSTRAINT fk_pedidos_detallepedido_pedido
+        FOREIGN KEY (pedido_id)
+        REFERENCES pedidos_pedido(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+    CONSTRAINT fk_pedidos_detallepedido_producto
+        FOREIGN KEY (producto_id)
+        REFERENCES pedidos_producto(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+-- =========================================================
+-- NOTA IMPORTANTE
+-- =========================================================
+-- Este script crea las tablas de negocio de tu sistema.
+-- Si usas autenticacion de Django (usuarios, sesiones, permisos, admin),
+-- esas tablas las crea automaticamente Django con:
+--
+--   python manage.py migrate
+--
+-- Si quieres, te genero otro archivo SQL con tablas de Django auth/admin.
+-- =========================================================

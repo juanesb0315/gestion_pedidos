@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="panel-crud vista-contenedor fixed-list-card">
+    <div class="card-header encabezado-crud vista-cabecera">
+        <h5 class="mb-0 fw-semibold">Detalle de Registro #{{ detalle.id }}</h5>
+        <a href="{% url 'listar_detalles' %}" class="btn btn-sm btn-crear-crud">
+            <i class="bi bi-arrow-left"></i> Volver
+        </a>
+    </div>
+
+    <div class="card-body vista-cuerpo">
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="small text-muted">Pedido</div>
+                <div><a href="{% url 'detalle' detalle.pedido.id %}">#{{ detalle.pedido.id }}</a></div>
+            </div>
+            <div class="col-md-6">
+                <div class="small text-muted">Cliente</div>
+                <div>{{ detalle.pedido.cliente.nombre }}</div>
+            </div>
+            <div class="col-md-6">
+                <div class="small text-muted">Producto</div>
+                <div>{{ detalle.producto.nombre }}</div>
+            </div>
+            <div class="col-md-6">
+                <div class="small text-muted">Cantidad</div>
+                <div>{{ detalle.cantidad }}</div>
+            </div>
+            <div class="col-md-6">
+                <div class="small text-muted">Subtotal</div>
+                <div>${{ detalle.subtotal }}</div>
+            </div>
+            <div class="col-md-6">
+                <div class="small text-muted">Estado del pedido</div>
+                <div>{{ detalle.pedido.estado }}</div>
+            </div>
+            <div class="col-md-12 mt-3">
+                <span class="small text-muted">Este registro es solo de consulta desde el listado general.</span>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

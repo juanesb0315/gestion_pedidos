@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section class="auth-wrap">
+
+    <div class="panel-crud vista-contenedor auth-card">
+
+        <div class="card-header encabezado-crud vista-cabecera auth-header">
+            <span class="auth-icon"><i class="bi bi-shield-lock"></i></span>
+            <h1 class="auth-title">Iniciar sesion</h1>
+            <p class="auth-subtitle">Accede a tu panel de pedidos</p>
+        </div>
+
+        <div class="card-body vista-cuerpo">
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="auth-campos">
+                    <div class="auth-campo">
+                        <label class="form-label">Usuario</label>
+                        <input type="text" 
+                               name="username" 
+                               class="form-control"
+                               placeholder="Tu usuario"
+                               required>
+                    </div>
+
+                    <div class="auth-campo">
+                        <label class="form-label">Contrasena</label>
+                        <input type="password" 
+                               name="password" 
+                               class="form-control"
+                               placeholder="Tu contrasena"
+                               required>
+                    </div>
+                </div>
+
+                {% if next %}
+                    <input type="hidden" name="next" value="{{ next }}">
+                {% endif %}
+
+                {% if error %}
+                <div class="text-danger small mt-3 mb-0">
+                    {{ error }}
+                </div>
+                {% endif %}
+
+                <div class="auth-acciones">
+                    <div class="d-grid mb-2">
+                        <button type="submit" class="btn btn-guardar-crud">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Ingresar
+                        </button>
+                    </div>
+                    <div class="text-center small">
+                        <a href="{% url 'register' %}" class="link-accion">No tienes cuenta? Registrate</a>
+                    </div>
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,62 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.views.generic import ListView
+
+from proyecto_pedidos.pedidos.models import Pedido
+from proyecto_pedidos.pedidos.forms import PedidoForm
+
+
+# lista paginada de pedidos
+class PedidoListView(LoginRequiredMixin, ListView):
+    model = Pedido
+    template_name = 'pedidos/listar.html'
+    context_object_name = 'pedidos'
+    paginate_by = 10
+    ordering = ['id']
+
+
+@login_required
+# crea un nuevo pedido
+def crear_pedido(request):
+    if request.method == 'POST':
+        form = PedidoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Pedido creado correctamente')
+            return redirect('listar')
+    else:
+        form = PedidoForm()
+    return render(request, 'pedidos/crear.html', {'form': form})
+
+
+@login_required
+# edita un pedido existente
+def editar_pedido(request, pk):
+    pedido = get_object_or_404(Pedido, pk=pk)
+    form = PedidoForm(request.POST or None, instance=pedido)
+    if form.is_valid():
+        form.save()
+        messages.success(request, 'Pedido actualizado correctamente')
+        return redirect('listar')
+    return render(request, 'pedidos/editar.html', {'form': form})
+
+
+@login_required
+# elimina pedido sin detalles asociados
+def eliminar_pedido(request, pk):
+    pedido = get_object_or_404(Pedido, pk=pk)
+    if pedido.detallepedido_set.exists():
+        messages.error(request, 'No puedes eliminar este pedido porque tiene productos asociados')
+        return redirect('listar')
+    pedido.delete()
+    messages.success(request, 'Pedido eliminado correctamente')
+    return redirect('listar')
+
+
+@login_required
+# muestra detalle general de un pedido
+def detalle_pedido(request, pk):
+    pedido = get_object_or_404(Pedido, pk=pk)
+    return render(request, 'detalles/detalle.html', {'pedido': pedido})

@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Sistema de Pedidos</title>
+    <!-- Bootstrap -->
+     <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- SweetAlert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --fondo-principal: #060b14;
+            --fondo-superficie: #0d1b2e;
+            --fondo-panel: #122845;
+            --azul-principal: #1f7ae0;
+            --azul-hover: #1763b6;
+            --azul-claro: #8ec5ff;
+            --texto-principal: #e8f2ff;
+            --texto-secundario: #aac6e8;
+            --borde-panel: rgba(143, 194, 255, 0.2);
+        }
+
+        body {
+            min-height: 100vh;
+            color: var(--texto-principal);
+            background:
+                radial-gradient(1200px 700px at 12% -12%, rgba(31, 122, 224, 0.26), transparent 60%),
+                radial-gradient(1000px 600px at 100% 0%, rgba(16, 55, 102, 0.35), transparent 55%),
+                var(--fondo-principal);
+        }
+
+        .navbar-principal {
+            background: linear-gradient(90deg, #0f1725 0%, #0b2748 55%, #103c73 100%);
+            border-bottom: 1px solid var(--borde-panel);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.32);
+        }
+
+        .marca-sistema {
+            letter-spacing: 0.04em;
+            font-weight: 700;
+            color: #f5fbff !important;
+        }
+
+        .navbar-principal .nav-link {
+            color: var(--texto-secundario) !important;
+            border-radius: 12px;
+            padding: 0.45rem 0.8rem;
+            transition: all 0.2s ease;
+        }
+
+        .navbar-principal .nav-link:hover,
+        .navbar-principal .nav-link:focus {
+            color: #ffffff !important;
+            background: rgba(31, 122, 224, 0.26);
+        }
+
+        .navbar-principal .navbar-toggler {
+            border-color: rgba(255, 255, 255, 0.28);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .contenido-principal {
+            padding: 1.75rem 1.25rem;
+        }
+
+        .vista-contenedor {
+            padding: 0.1rem;
+        }
+
+        .vista-contenedor,
+        .panel-crud,
+        .card,
+        .fixed-list-card {
+            animation: aparecer-suave 280ms ease-out;
+        }
+
+        .vista-cabecera {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.95rem 1.1rem;
+        }
+
+        .vista-cuerpo {
+            padding: 1rem 1.1rem 1.1rem;
+        }
+
+        .barra-acciones-lista {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.9rem;
+            flex-wrap: wrap;
+        }
+
+        .barra-exportaciones {
+            margin-top: 1rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(143, 194, 255, 0.18);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+        }
+
+        .acciones-formulario {
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.8rem;
+            flex-wrap: wrap;
+        }
+
+        .bloque-auth {
+            max-width: 470px;
+            margin: 3.6rem auto 0;
+        }
+
+        .auth-wrap {
+            position: relative;
+            max-width: 500px;
+            margin: 2.4rem auto 0;
+        }
+
+        .auth-wrap::before {
+            content: '';
+            position: absolute;
+            inset: -18px;
+            border-radius: 30px;
+            background: radial-gradient(circle at 20% 10%, rgba(70, 153, 255, 0.26), transparent 55%),
+                        radial-gradient(circle at 100% 95%, rgba(22, 93, 177, 0.22), transparent 50%);
+            filter: blur(2px);
+            z-index: 0;
+        }
+
+        .auth-card {
+            position: relative;
+            z-index: 1;
+            border-radius: 24px !important;
+            overflow: hidden;
+            backdrop-filter: blur(4px);
+        }
+
+        .auth-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.35rem;
+            text-align: center;
+        }
+
+        .auth-icon {
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(145deg, rgba(95, 175, 255, 0.3), rgba(14, 74, 143, 0.45));
+            border: 1px solid rgba(167, 214, 255, 0.35);
+            color: #dff0ff;
+            font-size: 1.15rem;
+        }
+
+        .auth-title {
+            font-size: 1.25rem;
+            line-height: 1.2;
+            letter-spacing: 0.01em;
+            margin: 0;
+        }
+
+        .auth-subtitle {
+            margin: 0;
+            color: var(--texto-secundario);
+            font-size: 0.92rem;
+        }
+
+        .auth-campos {
+            display: grid;
+            gap: 0.9rem;
+        }
+
+        .auth-campo {
+            padding: 0.6rem 0.7rem 0.72rem;
+            border-radius: 14px;
+            background: rgba(7, 20, 38, 0.38);
+            border: 1px solid rgba(126, 182, 247, 0.2);
+        }
+
+        .auth-campo .form-label {
+            font-size: 0.84rem;
+            margin-bottom: 0.35rem;
+            color: #cfe6ff;
+            font-weight: 600;
+        }
+
+        .auth-acciones {
+            margin-top: 1.15rem;
+        }
+
+        @media (min-width: 992px) {
+            .contenido-principal {
+                padding: 2rem 2.25rem;
+            }
+        }
+
+        .panel-crud,
+        .fixed-list-card,
+        .card {
+            background: linear-gradient(180deg, rgba(18, 40, 69, 0.92) 0%, rgba(13, 27, 46, 0.96) 100%);
+            border: 1px solid var(--borde-panel) !important;
+            border-radius: 24px;
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.26);
+            color: var(--texto-principal);
+        }
+
+        .card-header,
+        .encabezado-crud {
+            background: linear-gradient(90deg, rgba(31, 122, 224, 0.28), rgba(13, 27, 46, 0.18)) !important;
+            border-bottom: 1px solid var(--borde-panel) !important;
+            color: var(--texto-principal) !important;
+            border-top-left-radius: 24px !important;
+            border-top-right-radius: 24px !important;
+        }
+
+        .card-body {
+            border-bottom-left-radius: 24px;
+            border-bottom-right-radius: 24px;
+        }
+
+        .table-responsive {
+            border: 1px solid rgba(132, 186, 245, 0.2);
+            border-radius: 16px;
+            overflow: hidden;
+            background: rgba(8, 21, 40, 0.22);
+        }
+
+        .table thead th {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: #cfe5ff !important;
+        }
+
+        .table tbody td {
+            vertical-align: middle;
+        }
+
+        .table {
+            --bs-table-bg: transparent;
+            --bs-table-color: var(--texto-principal);
+            --bs-table-border-color: rgba(138, 184, 235, 0.2);
+            --bs-table-striped-bg: rgba(15, 45, 84, 0.35);
+            --bs-table-striped-color: var(--texto-principal);
+            --bs-table-hover-bg: rgba(31, 122, 224, 0.14);
+            --bs-table-hover-color: #ffffff;
+        }
+
+        h1, h2, h3, h4, h5, h6,
+        p,
+        span,
+        label,
+        th,
+        td,
+        strong,
+        .form-label {
+            color: var(--texto-principal);
+        }
+
+        .form-text,
+        .small,
+        small {
+            color: var(--texto-secundario) !important;
+        }
+
+        .text-dark,
+        .text-black,
+        .text-body,
+        .text-secondary {
+            color: var(--texto-principal) !important;
+        }
+
+        .text-muted,
+        .small.text-muted,
+        .table .text-muted {
+            color: var(--texto-secundario) !important;
+        }
+
+        .link-accion {
+            color: var(--azul-claro);
+            text-decoration: none;
+        }
+
+        .link-accion:hover {
+            color: #d2e9ff;
+        }
+
+        .icon-hover {
+            color: var(--azul-claro);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .icon-hover:hover {
+            color: #ffffff;
+        }
+
+        .form-control,
+        .form-select,
+        input,
+        textarea,
+        select {
+            background-color: rgba(7, 18, 34, 0.78) !important;
+            color: var(--texto-principal) !important;
+            border: 1px solid rgba(125, 179, 240, 0.35) !important;
+            border-radius: 14px !important;
+        }
+
+        .form-control::placeholder,
+        input::placeholder,
+        textarea::placeholder {
+            color: rgba(204, 226, 250, 0.72) !important;
+        }
+
+        .form-control:focus,
+        .form-select:focus,
+        input:focus,
+        textarea:focus,
+        select:focus {
+            border-color: rgba(142, 197, 255, 0.8) !important;
+            box-shadow: 0 0 0 0.25rem rgba(31, 122, 224, 0.25) !important;
+        }
+
+        .btn-crear-crud {
+            border: 1px solid rgba(164, 214, 255, 0.65);
+            border-radius: 999px;
+            color: #ffffff;
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            background: linear-gradient(135deg, #2a8eff 0%, #0f65c0 55%, #124d90 100%);
+            box-shadow: 0 10px 24px rgba(13, 88, 170, 0.42);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+
+        .btn-crear-crud:hover {
+            color: #ffffff;
+            background: linear-gradient(135deg, #55a8ff 0%, #1f7ae0 55%, #15589f 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 12px 26px rgba(15, 102, 196, 0.48);
+        }
+
+        .btn-guardar-crud {
+            border: 1px solid rgba(173, 215, 255, 0.4);
+            border-radius: 14px;
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--azul-principal), #1b60ad);
+            box-shadow: 0 8px 18px rgba(10, 79, 158, 0.38);
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+        }
+
+        .btn-dark {
+            border-color: rgba(173, 215, 255, 0.4);
+            color: #ffffff !important;
+            background: linear-gradient(135deg, var(--azul-principal), #1b60ad);
+        }
+
+        .btn-dark:hover {
+            border-color: rgba(201, 230, 255, 0.65);
+            color: #ffffff !important;
+            background: linear-gradient(135deg, #2f8df7, var(--azul-hover));
+        }
+
+        .btn-guardar-crud:hover {
+            color: #ffffff;
+            background: linear-gradient(135deg, #2f8df7, var(--azul-hover));
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(13, 83, 164, 0.42);
+        }
+
+        .btn-crear-crud:focus,
+        .btn-guardar-crud:focus {
+            color: #ffffff;
+            box-shadow: 0 0 0 0.25rem rgba(31, 122, 224, 0.35);
+        }
+
+        .btn-exportar {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            border: 1px solid rgba(146, 200, 255, 0.5);
+            border-radius: 10px;
+            padding: 0.38rem 0.75rem;
+            color: #dceeff;
+            text-decoration: none;
+            background: rgba(14, 48, 87, 0.45);
+            transition: all 0.2s ease;
+        }
+
+        .btn-exportar:hover {
+            color: #ffffff;
+            border-color: rgba(176, 218, 255, 0.8);
+            background: rgba(23, 86, 161, 0.52);
+        }
+
+        .tabla-acciones {
+            text-align: center;
+            width: 1%;
+            white-space: nowrap;
+        }
+
+        .btn-outline-secondary {
+            border-color: rgba(142, 197, 255, 0.35);
+            color: #d8eaff;
+            background: rgba(11, 31, 56, 0.45);
+            border-radius: 999px;
+        }
+
+        .btn-outline-secondary:hover {
+            border-color: rgba(142, 197, 255, 0.8);
+            background: rgba(31, 122, 224, 0.22);
+            color: #ffffff;
+        }
+
+        .btn-outline-secondary:disabled {
+            border-color: rgba(142, 197, 255, 0.2);
+            color: rgba(216, 234, 255, 0.48);
+            background: rgba(12, 24, 40, 0.35);
+        }
+
+        .badge.bg-light.text-dark {
+            background: rgba(54, 115, 183, 0.28) !important;
+            border-color: rgba(146, 199, 255, 0.35) !important;
+            color: #dceeff !important;
+        }
+
+        .navbar-principal .text-danger-emphasis {
+            color: #ffb8b8 !important;
+        }
+
+        .navbar-principal .text-danger-emphasis:hover {
+            color: #ffd0d0 !important;
+            background: rgba(255, 90, 90, 0.12);
+            border-radius: 10px;
+        }
+
+        /* Contenedor de listas con tamaño fijo para uniformidad de UI */
+        .fixed-list-card {
+            min-height: 680px;
+            max-height: 680px;
+            display: flex;
+            flex-direction: column;
+        }
+        .fixed-list-card .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            overflow: hidden;
+        }
+        .fixed-list-card .table-responsive {
+            flex: 1;
+            min-height: 240px;
+            max-height: none; /* Sin límite para que siempre quepa el paginado de 10 filas */
+            overflow-y: visible; /* Sin scroll interno */
+        }
+        .fixed-list-card .table-responsive table {
+            margin-bottom: 0;
+        }
+
+        @keyframes aparecer-suave {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark navbar-principal sticky-top">
+    <div class="container-fluid px-lg-4">
+        <a class="navbar-brand marca-sistema" href="/">
+            <i class="bi bi-grid-1x2-fill me-2"></i>Sistema Pedidos
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal" aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="menuPrincipal">
+            {% if user.is_authenticated %}
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-1">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link icon-hover">
+                            <i class="bi bi-bag me-1"></i>Pedidos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/clientes/" class="nav-link icon-hover">
+                            <i class="bi bi-people me-1"></i>Clientes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/productos/" class="nav-link icon-hover">
+                            <i class="bi bi-box me-1"></i>Productos
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{% url 'listar_detalles' %}" class="nav-link icon-hover">
+                            <i class="bi bi-list-columns me-1"></i>Detalles
+                        </a>
+                    </li>
+                </ul>
+                <a href="{% url 'logout' %}" class="nav-link text-danger-emphasis d-inline-flex align-items-center gap-1">
+                    <i class="bi bi-box-arrow-right"></i>Salir
+                </a>
+            {% else %}
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-lg-1"></ul>
+                <div class="d-flex align-items-center gap-2">
+                    <a href="{% url 'login' %}" class="btn btn-sm btn-outline-secondary">Iniciar sesion</a>
+                    <a href="{% url 'register' %}" class="btn btn-sm btn-crear-crud">Registrarse</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+<main class="contenido-principal">
+    <div class="d-flex justify-content-between mb-4">
+        <h4 class="fw-semibold">Panel</h4>
+    </div>
+    <div class="pb-3">
+        {% block content %}
+        {% endblock %}
+    </div>
+</main>
+{% if messages %}
+<script>
+    {% for message in messages %}
+        Swal.fire({
+            icon: '{% if message.tags == "error" %}error{% elif message.tags == "success" %}success{% else %}info{% endif %}',
+            title: '{{ message }}',
+            confirmButtonText: 'Aceptar'
+        });
+    {% endfor %}
+</script>
+{% endif %}
+<script>
+function ponerHoy() {
+    const inputFecha = document.querySelector('input[name="fecha"]');
+    const hoy = new Date();
+    const year = hoy.getFullYear();
+    const month = String(hoy.getMonth() + 1).padStart(2, '0');
+    const day = String(hoy.getDate()).padStart(2, '0');
+    inputFecha.value = `${year}-${month}-${day}`;
+}
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+</html>

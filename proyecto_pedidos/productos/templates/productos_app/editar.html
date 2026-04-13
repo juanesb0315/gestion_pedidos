@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<section class="panel-crud vista-contenedor">
+    <div class="card-header encabezado-crud vista-cabecera">
+        <h5 class="mb-0 fw-semibold">Editar Producto</h5>
+    </div>
+
+    <div class="card-body vista-cuerpo">
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                {{ formulario_producto.nombre }}
+                {% if formulario_producto.nombre.errors %}
+                <div class="text-danger small mt-1">{{ formulario_producto.nombre.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Precio</label>
+                {{ formulario_producto.precio }}
+                {% if formulario_producto.precio.errors %}
+                <div class="text-danger small mt-1">{{ formulario_producto.precio.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Stock</label>
+                {{ formulario_producto.stock }}
+                {% if formulario_producto.stock.errors %}
+                <div class="text-danger small mt-1">{{ formulario_producto.stock.errors|join:", " }}</div>
+                {% endif %}
+            </div>
+            <div class="acciones-formulario">
+                <a href="/productos/" class="link-accion small"> Volver </a>
+                <button type="button" class="btn btn-guardar-crud" onclick="confirmarGuardar()"> Guardar cambios </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<script>
+function confirmarGuardar() {
+    Swal.fire({
+        title: 'Guardar cambios?',
+        text: 'Se actualizaran los datos del producto.',
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#212529',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Si, guardar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.querySelector('form').submit();
+        }
+    });
+}
+</script>
+
+{% endblock %}

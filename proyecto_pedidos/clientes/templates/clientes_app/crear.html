@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="panel-crud vista-contenedor">
+    <div class="card-header encabezado-crud vista-cabecera">
+        <h5 class="mb-0 fw-semibold">Nuevo Cliente</h5>
+    </div>
+    <div class="card-body vista-cuerpo">
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                {{ formulario_cliente.nombre }}
+                {% if formulario_cliente.nombre.errors %}
+                    <div class="text-danger small mt-1">
+                        {{ formulario_cliente.nombre.errors|join:", " }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Correo</label>
+                {{ formulario_cliente.correo }}
+                {% if formulario_cliente.correo.errors %}
+                    <div class="text-danger small mt-1">
+                        {{ formulario_cliente.correo.errors|join:", " }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Telefono</label>
+                {{ formulario_cliente.telefono }}
+                {% if formulario_cliente.telefono.errors %}
+                    <div class="text-danger small mt-1">
+                        {{ formulario_cliente.telefono.errors|join:", " }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Direccion</label>
+                {{ formulario_cliente.direccion }}
+                {% if formulario_cliente.direccion.errors %}
+                    <div class="text-danger small mt-1">
+                        {{ formulario_cliente.direccion.errors|join:", " }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="acciones-formulario">
+                <a href="/clientes/" class="link-accion small">
+                    Volver
+                </a>
+                <button type="submit" class="btn btn-guardar-crud">
+                    Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}

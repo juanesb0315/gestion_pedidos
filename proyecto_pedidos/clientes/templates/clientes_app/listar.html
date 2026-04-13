@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="panel-crud vista-contenedor fixed-list-card">
+    <div class="card-header encabezado-crud vista-cabecera">
+        <h5 class="mb-0 fw-semibold">Clientes</h5>
+        <a href="{% url 'crear_cliente' %}" class="btn btn-sm btn-crear-crud">
+            <i class="bi bi-plus-lg"></i> Crear cliente
+        </a>
+    </div>
+    <div class="card-body vista-cuerpo">
+        <div class="barra-acciones-lista">
+            <span class="text-muted small">Gestion de clientes</span>
+            <div class="d-flex flex-wrap gap-2">
+                <a href="/exportar/clientes/pdf/" class="btn-exportar"><i class="bi bi-file-earmark-pdf"></i> Exportar PDF</a>
+                <a href="/exportar/clientes/excel/" class="btn-exportar"><i class="bi bi-file-earmark-excel"></i> Exportar Excel</a>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table tabla-crud align-middle">
+                <thead class="border-bottom">
+                    <tr class="text-muted small">
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Correo</th>
+                        <th>Telefono</th>
+                        <th>Direccion</th>
+                        <th class="tabla-acciones"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cliente_item in registros_clientes %}
+                    <tr class="border-bottom">
+                        <td>{{ cliente_item.id }}</td>
+                        <td class="fw-medium">{{ cliente_item.nombre }}</td>
+                        <td class="text-muted">{{ cliente_item.correo }}</td>
+                        <td>{{ cliente_item.telefono }}</td>
+                        <td>{{ cliente_item.direccion }}</td>
+                        <td class="tabla-acciones">
+                            <div class="d-flex justify-content-center gap-3">
+                                <a href="{% url 'ver_cliente' cliente_item.id %}"
+                                   class="text-dark icon-hover"
+                                   title="Ver detalle">
+                                    <i class="bi bi-eye"></i> Ver
+                                </a>
+                                <a href="/clientes/editar/{{cliente_item.id}}"
+                                   class="text-dark icon-hover"
+                                   title="Editar">
+                                    <i class="bi bi-pencil"></i> Editar
+                                </a>
+                                <a href="#"
+                                   onclick="confirmarEliminacionCliente({{cliente_item.id}})"
+                                   class="text-dark icon-hover"
+                                   title="Eliminar">
+                                    <i class="bi bi-trash"></i> Eliminar
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-muted">
+                            No hay clientes registrados
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="mt-3 d-flex justify-content-between align-items-center">
+            <div class="small text-muted">
+                {% if page_obj %}
+                    Pagina {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                {% else %}
+                    Pagina 1 de 1
+                {% endif %}
+            </div>
+            <div class="d-flex gap-2">
+                {% if is_paginated %}
+                    <a href="?page=1" class="btn btn-sm btn-outline-secondary">Primera</a>
+
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-sm btn-outline-secondary">Anterior</a>
+                    {% else %}
+                        <button class="btn btn-sm btn-outline-secondary" disabled>Anterior</button>
+                    {% endif %}
+
+                    {% for page in page_obj.paginator.page_range %}
+                        {% if page == page_obj.number %}
+                            <span class="btn btn-sm btn-primary">{{ page }}</span>
+                        {% else %}
+                            <a href="?page={{ page }}" class="btn btn-sm btn-outline-secondary">{{ page }}</a>
+                        {% endif %}
+                    {% endfor %}
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" class="btn btn-sm btn-outline-secondary">Siguiente</a>
+                    {% else %}
+                        <button class="btn btn-sm btn-outline-secondary" disabled>Siguiente</button>
+                    {% endif %}
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="btn btn-sm btn-outline-secondary">Ultima</a>
+                {% else %}
+                    <span class="text-muted">No hay mas paginas</span>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</section>
+<script>
+function confirmarEliminacionCliente(id) {
+  Swal.fire({
+    title: 'Eliminar cliente?',
+    text: 'Esta accion no se puede deshacer',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#009bd8',
+    cancelButtonColor: '#d33',
+    iconColor: '#ff0000',
+    confirmButtonText: 'Si, eliminar',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      window.location.href = '/clientes/eliminar/' + id;
+    }
+  });
+}
+</script>
+
+{% endblock %}
