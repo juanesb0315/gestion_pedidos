@@ -24,7 +24,7 @@ def _b64url_decode(data: str) -> bytes:
 
 
 # crea token jwt firmado con hs256
-def create_jwt_token(user, expires_in=15):
+def create_jwt_token(user, expires_in=3600):
     """Crea un JWT simple con HS256, exp y algunos claims básicos."""
     header = {'alg': 'HS256', 'typ': 'JWT'}
     payload = {
