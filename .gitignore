@@ -1,0 +1,38 @@
+# Base de datos SQLite3 (se genera con migrate en PythonAnywhere)
+db.sqlite3
+
+# Archivos estáticos colectados (se generan con collectstatic)
+staticfiles/
+
+# Entorno virtual
+env/
+venv/
+.env/
+.venv/
+
+# Cache Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Archivos de compilación
+*.egg-info/
+dist/
+build/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+*.log
+
+# Variables de entorno
+.env
+*.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
